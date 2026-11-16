@@ -2,14 +2,14 @@
   // 入站协议配置：定义服务器如何接收客户端发来的连接
   "inbounds": [
     {
-      "type": "anytls",               // 入站协议类型为 AnyTLS（抗 DPI 深度包检测的 TLS 协议）
-      "tag": "anytls",               // 该入站节点的标识标签（用于路由匹配与日志追踪）
+      "type": "AnyTLS",               // 入站协议类型为 AnyTLS（抗 DPI 深度包检测的 TLS 协议）
+      "tag": "AnyTLS",               // 该入站节点的标识标签（用于路由匹配与日志追踪）
       "listen": "::",                 // 监听地址，"::" 表示同时监听所有 IPv4 和 IPv6 网络接口
       "listen_port": 443,             // 监听端口（443 为标准 HTTPS 端口，增强伪装度）
       // 允许连接的授权用户列表
       "users": [
         {
-          "name": "zhao",            // 用户标识名称
+          "name": "name",            // 用户标识名称
           "password": "password" // 用户身份验证密钥/密码
         }
       ],
