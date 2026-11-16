@@ -1,0 +1,50 @@
+# ==============================================================================
+# 注意事项与配置说明：
+# 1. REALITY 密钥对（公钥/私钥）生成方法：
+#    在安装了 sing-box 的终端中运行命令：sing-box generate reality-keypair
+#    - 私钥 (private_key)：填入本服务端配置中（代码下方已填入）。
+#    - 公钥 (public_key)：需妥善保存，配置在客户端连接参数中（服务端配置中无需填写公钥）.
+# 
+# 2. Short ID (short_id，即你提到的 shortia) 生成方法：
+#    在终端中运行命令：openssl rand -hex 8
+#    - 生成的是一个十六进制字符串（通常为 0~8 字节，最大 16 个字符），
+#      用于客户端与服务端进行握手时的暗号识别，双端必须一致。
+# ==============================================================================
+{
+  "inbounds": [
+    {
+      "type": "mixed",                  // 混合入站类型，同时支持 HTTP 和 SOCKS5 代理协议
+      "listen": "::",                   // 监听地址，"::" 表示监听所有 IPv4 和 IPv6 网络接口
+      "listen_port": 10000              // 本地代理监听端口
+    }
+  ],
+  // 出站协议配置：定义流量发往远程服务器的规则
+  "outbounds": [
+    {
+      "type": "AnyReality",                 // 修复：出站类型必须是小写的 "anytls"
+      "tag": "AnyReality",              // 出站节点的标签名称（用于路由规则引用）
+      "server": "one-piece.com",        // 远程服务器地址（与服务端域名保持一致）
+      "server_port": 443,               // 远程服务器端口
+      "password": "8JCsPssfgS8tiRwiMlhARg==", // 身份校验密码（必须与服务端 users 中的 password 完全一致）
+      "idle_session_check_interval": "30s", // 空闲连接/会话检测的时间间隔
+      "idle_session_timeout": "30s",    // 会话空闲超时时间，超时后自动释放连接
+      "min_idle_session": 5,            // 维持的最少空闲预连接数
+      // TLS 传输层安全与 REALITY 配置
+      "tls": {
+        "enabled": true,                // 启用 TLS 加密传输
+        "server_name": "one-piece.com", // SNI 验证域名（必须与服务端 handshake.server 一致）
+        // REALITY 客户端验证配置
+        "reality": {
+          "enabled": true,              // 启用 REALITY
+          "public_key": "你的服务端公钥_PUBLIC_KEY", // 替换为服务端生成的真实公钥
+          "short_id": "6ce0993f6735eaa0"  // 必须与服务端 short_id 完全一致
+        },
+        // uTLS 客户端指纹伪装配置
+        "utls": {
+          "enabled": true,              // 启用 uTLS 指纹伪装
+          "fingerprint": "chrome"       // 伪装为 Chrome 浏览器的 TLS 握手指纹特征
+        }
+      }
+    }
+  ]
+}
